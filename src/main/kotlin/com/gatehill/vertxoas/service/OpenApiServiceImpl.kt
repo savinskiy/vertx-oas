@@ -49,7 +49,12 @@ class OpenApiServiceImpl : OpenApiService {
                 }
             }
 
-            val pathItem = PathItem().apply {
+            val createdItem = when (paths.containsKey(convertedPath)) {
+                true -> paths.get(convertedPath)
+                false -> PathItem()
+            }
+
+            val pathItem = createdItem?.apply {
                 val operation = Operation().apply {
                     parameters = splitPath
                             .filter { it.startsWith(":") }
@@ -63,7 +68,7 @@ class OpenApiServiceImpl : OpenApiService {
                             }
                 }
 
-                (route as RouteImpl).javaClass.getDeclaredField("methods").apply {
+                (route as RouteImpl).javaClass.getDeclaredField("methods")?.apply {
                     isAccessible = true
 
                     @Suppress("UNCHECKED_CAST")
